@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  twitter-trends
+
+  Sample SAM Template for twitter-trends
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  TwitterTrendsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: twitter_trends/
+      Handler: app.twitter_trends_collector
+      Runtime: python3.7
+      Policies:
+        - AmazonS3FullAccess
+      Events:
+        IndiaTrendsSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'rate(1 hour)'
+            Input: >
+              {
+                "woeid": "2282863"
+              }
+        WorldTrendsSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'rate(1 hour)'
+
+  TwitterTrendsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: twitter-trends-bucket
